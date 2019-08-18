@@ -16,6 +16,10 @@
  * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 
 #include <stdio.h>
 #include <iostream>
@@ -32,6 +36,10 @@
 #include <gst/base/gstpushsrc.h>
 #include <gst/video/video.h>
 
+GST_DEBUG_CATEGORY_STATIC (cef_src_debug);
+#define GST_CAT_DEFAULT cef_src_debug
+
+
 #define GST_TYPE_CEF_SRC \
   (gst_cef_src_get_type())
 #define GST_CEF_SRC(obj) \
@@ -43,8 +51,6 @@
 #define GST_IS_CEF_SRC_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_CEF_SRC))
 
-GST_DEBUG_CATEGORY_STATIC (cef_src_debug);
-#define GST_CAT_DEFAULT cef_src_debug
 
 #define DEFAULT_WIDTH 1920
 #define DEFAULT_HEIGHT 1080
@@ -75,7 +81,7 @@ struct _GstCefSrcClass {
   GstPushSrcClass parent_class;
 };
 
-GType gst_cef_src_get_type (void);
+//GType gst_cef_src_get_type (void);
 
 #define gst_cef_src_parent_class parent_class
 G_DEFINE_TYPE (GstCefSrc, gst_cef_src, GST_TYPE_PUSH_SRC);

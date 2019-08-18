@@ -1,11 +1,13 @@
 FROM centos:centos7.2.1511
 
-RUN yum -y install git vim sudo build-essential yasm libtool \
-    libx264-devel libfreetype6-devel swig automake autoconf liblog4cxx-devel \
-    pkg-config cmake libbz2-devel liblzma-devel zlib1g-devel libva-devel libx11-devel \
+RUN  yum -y --enablerepo=extras install epel-release \
+    && yum -y install git vim sudo yasm libtool \
+    libx264-devel libfreetype-devel swig automake autoconf log4cxx-devel \
+    pkgconfig cmake bz2-libs-devel lzma-devel zlib1g-devel libva-devel libx11-devel \
     && conda create -n py27 python=2.7 \
     && conda update conda \
-    && mkdir -p /home/root/cerbero/
+    && mkdir -p /home/root/cerbero/ \
+    && yum groupinstall 'Development Tools'
 
 RUN git clone --single-branch -b 1.14 https://github.com/Gstreamer/cerbero.git cerbero \
     && cd cerbero \
