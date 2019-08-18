@@ -1,4 +1,4 @@
-FROM centos:centos7.2.1511
+FROM conda:miniconda3-centos7
 
 RUN  yum -y --enablerepo=extras install epel-release \
     && yum -y install git vim sudo yasm libtool \
@@ -7,10 +7,7 @@ RUN  yum -y --enablerepo=extras install epel-release \
     && conda create -n py27 python=2.7 \
     && conda update conda \
     && mkdir -p /home/root/cerbero/ \
-    && yum groupinstall 'Development Tools' \
-    && cd /tmp \
-    && curl  -O https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh \
-    && ./Anaconda3-5.3.1-Linux-x86_64.sh
+    && yum groupinstall 'Development Tools'
 
 RUN git clone --single-branch -b 1.14 https://github.com/Gstreamer/cerbero.git cerbero \
     && cd cerbero \
