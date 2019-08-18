@@ -3,11 +3,14 @@ FROM centos:centos7.2.1511
 RUN  yum -y --enablerepo=extras install epel-release \
     && yum -y install git vim sudo yasm libtool \
     libx264-devel libfreetype-devel swig automake autoconf log4cxx-devel \
-    pkgconfig cmake bz2-libs-devel lzma-devel zlib1g-devel libva-devel libx11-devel \
+    pkgconfig cmake bz2-libs-devel lzma-devel zlib-devel libva-devel libX11-devel \
     && conda create -n py27 python=2.7 \
     && conda update conda \
     && mkdir -p /home/root/cerbero/ \
-    && yum groupinstall 'Development Tools'
+    && yum groupinstall 'Development Tools' \
+    && cd /tmp \
+    && curl  -O https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh \
+    && ./Anaconda3-5.3.1-Linux-x86_64.sh
 
 RUN git clone --single-branch -b 1.14 https://github.com/Gstreamer/cerbero.git cerbero \
     && cd cerbero \
