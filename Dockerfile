@@ -1,4 +1,4 @@
-FROM conda:miniconda3-centos7
+FROM conda/miniconda3-centos7
 
 RUN  yum -y --enablerepo=extras install epel-release \
     && yum -y install git vim sudo yasm libtool \
