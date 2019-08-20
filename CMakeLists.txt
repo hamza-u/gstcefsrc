@@ -6,7 +6,8 @@ project(gstcef)
 
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
 
-set(CEF_VERSION "3.3440.1806.g65046b7")
+set(CEF_VERSION "76.1.9+g2cf916e+chromium-76.0.3809.87")
+#set(CEF_VERSION "3.3440.1806.g65046b7")
 
 # Determine the platform.
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")

@@ -32,7 +32,7 @@ function(DownloadCEF platform version download_dir)
       message(STATUS "Downloading ${CEF_DOWNLOAD_PATH}...")
       file(
         DOWNLOAD "${CEF_DOWNLOAD_URL}" "${CEF_DOWNLOAD_PATH}"
-        EXPECTED_HASH SHA1=${CEF_SHA1}
+	EXPECTED_HASH SHA1=${CEF_SHA1}
         SHOW_PROGRESS
         )
     endif()

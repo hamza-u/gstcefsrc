@@ -108,12 +108,11 @@ class RenderHandler : public CefRenderHandler
     {
     }
 
-    bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
+    void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect &rect)
     {
       GST_OBJECT_LOCK (element);
       rect = CefRect(0, 0, element->info.width, element->info.height);
       GST_OBJECT_UNLOCK (element);
-      return true;
     }
 
     void OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList &dirtyRects, const void * buffer, int w, int h)
@@ -215,7 +214,7 @@ gst_cef_src_start(GstBaseSrc *base_src)
 
   /* We create the browser outside of the lock because it will call the paint
    * callback synchronously */
-  browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), src->url, browserSettings, nullptr);
+  browser = CefBrowserHost::CreateBrowserSync(window_info, browserClient.get(), src->url, browserSettings, NULL, NULL);
 
   GST_OBJECT_LOCK (src);
   src->browser = browser;
