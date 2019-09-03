@@ -67,7 +67,8 @@ enum
   PROP_URL,
   PROP_WIDTH,
   PROP_HEIGHT,
-  PROP_FRAMERATE,
+  PROP_FRAMERATE_N,
+  PROP_FRAMERATE_D,
 };
 
 struct _GstCefSrc {
@@ -79,7 +80,8 @@ struct _GstCefSrc {
   gchar *url;
   guint width;
   guint height;
-  gdouble framerate;
+  guint framerate_n;
+  guint framerate_d;
   CefRefPtr<CefBrowser> browser;
 };
 
@@ -311,9 +313,9 @@ gst_cef_src_fixate (GstBaseSrc * base_src, GstCaps * caps)
   gst_structure_fixate_field_nearest_int (structure, "height", src->height);
 
   if (gst_structure_has_field (structure, "framerate"))
-    gst_structure_fixate_field_nearest_fraction (structure, "framerate", DEFAULT_FPS_N, DEFAULT_FPS_D);
+    gst_structure_fixate_field_nearest_fraction (structure, "framerate", src->framerate_n, src->framerate_d);
   else
-    gst_structure_set (structure, "framerate", GST_TYPE_FRACTION, DEFAULT_FPS_N, DEFAULT_FPS_D, NULL);
+    gst_structure_set (structure, "framerate", GST_TYPE_FRACTION, src->framerate_n, src->framerate_d, NULL);
 
 
   caps = GST_BASE_SRC_CLASS (parent_class)->fixate (base_src, caps);
@@ -369,9 +371,14 @@ gst_cef_src_set_property (GObject * object, guint prop_id, const GValue * value,
         src->height = g_value_get_uint (value);
         break;
     }
-    case PROP_FRAMERATE:
+    case PROP_FRAMERATE_N:
     {
-        src->framerate = g_value_get_double (value);
+        src->framerate_n = g_value_get_uint (value);
+        break;
+    }
+    case PROP_FRAMERATE_D:
+    {
+        src->framerate_d = g_value_get_uint (value);
         break;
     }
     default:
@@ -396,8 +403,11 @@ gst_cef_src_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_HEIGHT:
       g_value_set_uint (value, src->height);
       break;
-    case PROP_FRAMERATE:
-      g_value_set_double (value, src->framerate);
+    case PROP_FRAMERATE_N:
+      g_value_set_uint (value, src->framerate_n);
+      break;
+    case PROP_FRAMERATE_D:
+      g_value_set_uint (value, src->framerate_d);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -412,6 +422,10 @@ gst_cef_src_init (GstCefSrc * src)
 
   src->n_frames = 0;
   src->current_buffer = NULL;
+  src->width = DEFAULT_WIDTH;
+  src->height = DEFAULT_HEIGHT;
+  src->framerate_n = DEFAULT_FPS_N;
+  src->framerate_d = DEFAULT_FPS_D;
 
   gst_base_src_set_format (base_src, GST_FORMAT_TIME);
   gst_base_src_set_live (base_src, TRUE);
@@ -444,9 +458,14 @@ gst_cef_src_class_init (GstCefSrcClass * klass)
                 DEFAULT_HEIGHT, G_PARAM_READWRITE));
 
     g_object_class_install_property (gobject_class, PROP_FRAMERATE,
-            g_param_spec_uint ("framerate", "framerate",
-                "framerate", 0, 120,
-                DEFAULT_FPS_N/DEFAULT_FPS_D, G_PARAM_READWRITE));
+            g_param_spec_uint ("framerate_n", "framerate_n",
+                "framerate_n", 1, G_MAXUINT,
+                DEFAULT_FPS_N, G_PARAM_READWRITE));
+
+    g_object_class_install_property (gobject_class, PROP_FRAMERATE,
+            g_param_spec_uint ("framerate_d", "framerate_d",
+                "framerate_d", 1, G_MAXUINT,
+                DEFAULT_FPS_D, G_PARAM_READWRITE));
 
   gst_element_class_set_static_metadata (gstelement_class,
       "Chromium Embedded Framework source", "Source/Video",
