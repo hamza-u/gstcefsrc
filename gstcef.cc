@@ -65,6 +65,9 @@ enum
 {
   PROP_0,
   PROP_URL,
+  PROP_WIDTH,
+  PROP_HEIGHT,
+  PROP_FRAMERATE,
 };
 
 struct _GstCefSrc {
@@ -74,6 +77,9 @@ struct _GstCefSrc {
   guint64 n_frames;
   gulong cef_work_id;
   gchar *url;
+  guint width;
+  guint height;
+  gdouble framerate;
   CefRefPtr<CefBrowser> browser;
 };
 
@@ -112,7 +118,7 @@ class RenderHandler : public CefRenderHandler
     {
       GST_OBJECT_LOCK (element);
       if (element->info.width == 0 || element->info.height == 0)
-      	rect = CefRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+      	rect = CefRect(0, 0, element->width, element->height);
       else
         rect = CefRect(0, 0, element->info.width, element->info.height);
       GST_OBJECT_UNLOCK (element);
@@ -214,8 +220,8 @@ gst_cef_src_start(GstBaseSrc *base_src)
   }
 
   window_info.SetAsWindowless(0);
-  window_info.width = DEFAULT_WIDTH;
-  window_info.height = DEFAULT_HEIGHT;
+  window_info.width = src->width;
+  window_info.height = src->height;
   browserClient = new BrowserClient(renderHandler);
 
   /* We create the browser outside of the lock because it will call the paint
@@ -296,12 +302,13 @@ static GstCaps *
 gst_cef_src_fixate (GstBaseSrc * base_src, GstCaps * caps)
 {
   GstStructure *structure;
+  GstCefSrc *src = GST_CEF_SRC (base_src);
 
   caps = gst_caps_make_writable (caps);
   structure = gst_caps_get_structure (caps, 0);
 
-  gst_structure_fixate_field_nearest_int (structure, "width", DEFAULT_WIDTH);
-  gst_structure_fixate_field_nearest_int (structure, "height", DEFAULT_HEIGHT);
+  gst_structure_fixate_field_nearest_int (structure, "width", src->width);
+  gst_structure_fixate_field_nearest_int (structure, "height", src->height);
 
   if (gst_structure_has_field (structure, "framerate"))
     gst_structure_fixate_field_nearest_fraction (structure, "framerate", DEFAULT_FPS_N, DEFAULT_FPS_D);
@@ -352,6 +359,21 @@ gst_cef_src_set_property (GObject * object, guint prop_id, const GValue * value,
       src->url = g_strdup (url);
       break;
     }
+    case PROP_WIDTH:
+    {
+        src->width = g_value_get_uint (value);
+        break;
+    }
+    case PROP_HEIGHT:
+    {
+        src->height = g_value_get_uint (value);
+        break;
+    }
+    case PROP_FRAMERATE:
+    {
+        src->framerate = g_value_get_double (value);
+        break;
+    }
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -367,6 +389,15 @@ gst_cef_src_get_property (GObject * object, guint prop_id, GValue * value,
   switch (prop_id) {
     case PROP_URL:
       g_value_set_string (value, src->url);
+      break;
+    case PROP_WIDTH:
+      g_value_set_uint (value, src->width);
+      break;
+    case PROP_HEIGHT:
+      g_value_set_uint (value, src->height);
+      break;
+    case PROP_FRAMERATE:
+      g_value_set_double (value, src->framerate);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -401,6 +432,21 @@ gst_cef_src_class_init (GstCefSrcClass * klass)
       g_param_spec_string ("url", "url",
           "The URL to display",
           DEFAULT_URL, (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT)));
+
+    g_object_class_install_property (gobject_class, PROP_WIDTH,
+            g_param_spec_uint ("width", "width",
+                "width", 0, G_MAXUINT,
+                DEFAULT_WIDTH, G_PARAM_READWRITE));
+
+    g_object_class_install_property (gobject_class, PROP_HEIGHT,
+            g_param_spec_uint ("height", "height",
+                "height", 0, G_MAXUINT,
+                DEFAULT_HEIGHT, G_PARAM_READWRITE));
+
+    g_object_class_install_property (gobject_class, PROP_FRAMERATE,
+            g_param_spec_uint ("framerate", "framerate",
+                "framerate", 0, 120,
+                DEFAULT_FPS_N/DEFAULT_FPS_D, G_PARAM_READWRITE));
 
   gst_element_class_set_static_metadata (gstelement_class,
       "Chromium Embedded Framework source", "Source/Video",
