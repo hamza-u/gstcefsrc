@@ -457,12 +457,12 @@ gst_cef_src_class_init (GstCefSrcClass * klass)
                 "height", 0, G_MAXUINT,
                 DEFAULT_HEIGHT, G_PARAM_READWRITE));
 
-    g_object_class_install_property (gobject_class, PROP_FRAMERATE,
+    g_object_class_install_property (gobject_class, PROP_FRAMERATE_N,
             g_param_spec_uint ("framerate_n", "framerate_n",
                 "framerate_n", 1, G_MAXUINT,
                 DEFAULT_FPS_N, G_PARAM_READWRITE));
 
-    g_object_class_install_property (gobject_class, PROP_FRAMERATE,
+    g_object_class_install_property (gobject_class, PROP_FRAMERATE_D,
             g_param_spec_uint ("framerate_d", "framerate_d",
                 "framerate_d", 1, G_MAXUINT,
                 DEFAULT_FPS_D, G_PARAM_READWRITE));
