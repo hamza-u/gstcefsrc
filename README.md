@@ -37,5 +37,7 @@ docker build .
 ### Run Gst-Cef inside docker
 
 ```
-docker run -it --rm hamzaudaipur/gstcefsrc ./run_in_docker.sh "gst-launch-1.0 -v cefsrc url=http://www.chiptune.com/kaleidoscope/ ! queue ! fakesink"
+1. docker run -it --rm hamzaudaipur/gstcefsrc ./run_in_docker.sh "gst-launch-1.0 -v cefsrc url=http://www.chiptune.com/kaleidoscope/ ! queue ! fakesink"
+
+2. docker run -it --rm -v $PWD/output:/tmp/output hamzaudaipur/gstcefsrc ./run_in_docker.sh "gst-launch-1.0 -v cefsrc url=http://www.chiptune.com/kaleidoscope/ ! queue ! videoconvert ! avenc_targa ! multifilesink location=/tmp/output/img_%06d.tga"
 ```
