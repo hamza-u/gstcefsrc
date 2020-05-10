@@ -6,3 +6,4 @@ services:
 
 before_install:
     - docker build -t hamzaudaipur/gstcefsrc .
+    - docker push hamzaudaipur/gstcefsrc:latest
