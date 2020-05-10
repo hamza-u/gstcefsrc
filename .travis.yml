@@ -6,4 +6,5 @@ services:
 
 before_install:
     - docker build -t hamzaudaipur/gstcefsrc .
+    - docker login -u hamzaudaipur -p ${DH_PASSWORD}
     - docker push hamzaudaipur/gstcefsrc:latest
