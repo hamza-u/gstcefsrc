@@ -131,6 +131,9 @@ class RenderHandler : public CefRenderHandler
     {
       GstBuffer *new_buffer;
 
+      if (browser->IsLoading ())
+        continue;
+
       GST_DEBUG_OBJECT (element, "Painting, buffer address: %p, width / height: %d  / %d ", buffer, w,  h);
 
       GST_OBJECT_LOCK (element);
